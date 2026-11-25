@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المختبر التفاعلي لأمراض الدم ونقلها | جامعة فلسطين</title>
+    
+    <!-- Google Fonts: Cairo & Tajawal & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#060a13',
+                            900: '#0b1120',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        blood: {
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            900: '#450a0a',
+                        },
+                        cyan: {
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar & Glassmorphism Utilities */
+        body {
+            background-color: #0b1120;
+            color: #f8fafc;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        html:not(.dark) body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        html:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        html:not(.dark) .glass-panel {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(6, 182, 212, 0.12) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Agglutination Clumping Visual Animation */
+        .clump-dot {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #06b6d4;
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+            border: 2px solid #ffffff;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 999px;
+        }
+
+        .ltr-num {
+            direction: ltr;
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-grid-pattern min-h-screen selection:bg-cyan-500 selection:text-white transition-colors duration-300">
+
+    <!-- Top Navigation Bar (Sticky) -->
+    <header class="sticky top-0 z-50 glass-card border-b border-cyan-500/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <!-- Brand / University Identity -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center shadow-lg shadow-red-500/30 text-white">
+                        <i class="fa-solid fa-droplet text-lg md:text-xl animate-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-sm sm:text-base md:text-lg tracking-tight bg-gradient-to-l from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                                مختبر أمراض الدم ونقلها
+                            </span>
+                            <span class="hidden sm:inline-block px-2 py-0.5 text-[11px] font-bold rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                                جامعة فلسطين
+                            </span>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400">
+                            علم التشريح ووظائف الأعضاء 1 | <span class="text-cyan-400 font-semibold">أ. سعيد الاغا</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links (Desktop) -->
+                <nav class="hidden lg:flex items-center gap-1 bg-slate-800/40 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-700/40">
+                    <a href="#section-blood-typing" class="px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-cyan-500/20 hover:text-cyan-400 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-vial-virus text-red-400"></i> فصائل الدم والمطابقة
+                    </a>
+                    <a href="#section-protocol" class="px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-cyan-500/20 hover:text-cyan-400 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-emerald-400"></i> بروتوكول النقل
+                    </a>
+                    <a href="#section-cbc" class="px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-cyan-500/20 hover:text-cyan-400 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-cyan-400"></i> قارئ تحليل CBC
+                    </a>
+                    <a href="#section-wbc-platelets" class="px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-cyan-500/20 hover:text-cyan-400 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-shield-virus text-amber-400"></i> البيضاء والصفائح
+                    </a>
+                </nav>
+
+                <!-- Theme Toggle & Quick Quiz Button -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleTheme()" title="تبديل المظهر" class="p-2.5 rounded-xl glass-panel hover:border-cyan-400/50 transition-all text-slate-300 dark:text-slate-200">
+                        <i id="theme-icon" class="fa-solid fa-sun text-amber-400"></i>
+                    </button>
+                    <a href="#section-cbc" class="px-3 py-2 md:px-4 md:py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs md:text-sm font-bold shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span class="hidden sm:inline">المختبر التفاعلي</span>
+                        <span class="sm:hidden">جرّب الآن</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mobile Horizontal Scroll Nav -->
+            <div class="flex lg:hidden items-center gap-2 overflow-x-auto pb-3 pt-1 no-scrollbar text-xs font-bold">
+                <a href="#section-blood-typing" class="shrink-0 px-3 py-1.5 rounded-xl glass-panel border border-red-500/30 text-red-400">
+                    1. فصائل الدم والمطابقة
+                </a>
+                <a href="#section-protocol" class="shrink-0 px-3 py-1.5 rounded-xl glass-panel border border-emerald-500/30 text-emerald-400">
+                    2. بروتوكول النقل
+                </a>
+                <a href="#section-cbc" class="shrink-0 px-3 py-1.5 rounded-xl glass-panel border border-cyan-500/30 text-cyan-400">
+                    3. قارئ CBC التفاعلي
+                </a>
+                <a href="#section-wbc-platelets" class="shrink-0 px-3 py-1.5 rounded-xl glass-panel border border-amber-500/30 text-amber-400">
+                    4. فيروسي أم بكتيري + الصفائح
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-10 pb-14 md:pt-16 md:pb-20 overflow-hidden">
+        <!-- Decorative Ambient Glows -->
+        <div class="absolute top-10 right-10 w-72 h-72 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 left-10 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 md:p-12 border border-cyan-500/20 relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-8 space-y-5">
+                        <!-- Academic Badge -->
+                        <div class="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-cyan-500/15 to-emerald-500/15 border border-cyan-400/30 text-xs sm:text-sm font-bold text-cyan-300">
+                            <i class="fa-solid fa-graduation-cap text-cyan-400"></i>
+                            <span>جامعة فلسطين - كلية الدبلوم | مساق علم التشريح ووظائف الأعضاء 1</span>
+                        </div>
+
+                        <h1 class="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight">
+                            المختبر التفاعلي لأمراض الدم ونقلها
+                            <span class="block text-lg sm:text-2xl md:text-3xl font-bold text-cyan-400 mt-2 font-mono ltr-num">
+                                Hematology & Blood Transfusion Interactive Lab
+                            </span>
+                        </h1>
+
+                        <p class="text-slate-300 dark:text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
+                            منصة محاكاة سريرية ومخبرية متكاملة صُممت خصيصاً لطلبة التمريض؛ لإتقان آلية تحديد فصائل الدم والتلازن، وقواعد نقل الدم الآمن (قبل، أثناء، وبعد الإعطاء)، وقراءة تحليل صورة الدم الكاملة <span class="font-mono text-cyan-400 font-bold">(CBC)</span> والتمييز الدقيق بين العدوى البكتيرية والفيروسية واضطرابات الصفائح الدموية.
+                        </p>
+
+                        <!-- Instructor Card -->
+                        <div class="flex flex-wrap items-center gap-4 pt-2">
+                            <div class="flex items-center gap-3 px-4 py-2.5 rounded-2xl glass-panel border border-emerald-500/30">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] text-slate-400">إعداد وإشراف </div>
+                                    <div class="text-sm sm:text-base font-extrabold text-emerald-400">   جامعة فلسطين_محمد ابو خليل </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-3 px-4 py-2.5 rounded-2xl glass-panel border border-red-500/30">
+                                <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-lg">
+                                    <i class="fa-solid fa-heart-pulse"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] text-slate-400">التطبيق السريري</div>
+                                    <div class="text-sm font-bold">محاكاة حية + 5 حالات CBC</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bento Quick Stats / Visual Blood Cell Card -->
+                    <div class="lg:col-span-4 grid grid-cols-2 gap-3 sm:gap-4">
+                        <a href="#section-blood-typing" class="glass-panel p-4 rounded-2xl border border-red-500/25 hover:border-red-400 transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-vials text-lg"></i>
+                            </div>
+                            <h3 class="font-extrabold text-sm sm:text-base">محاكي التلازن</h3>
+                            <p class="text-xs text-slate-400 mt-1">فحص ABO & Rh والمطابقة الفورية</p>
+                        </a>
+
+                        <a href="#section-protocol" class="glass-panel p-4 rounded-2xl border border-emerald-500/25 hover:border-emerald-400 transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-syringe text-lg"></i>
+                            </div>
+                            <h3 class="font-extrabold text-sm sm:text-base">بروتوكول النقل</h3>
+                            <p class="text-xs text-slate-400 mt-1">قاعدة الـ 15 دقيقة والفلتر والمحاليل</p>
+                        </a>
+
+                        <a href="#section-cbc" class="glass-panel p-4 rounded-2xl border border-cyan-500/25 hover:border-cyan-400 transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-chart-column text-lg"></i>
+                            </div>
+                            <h3 class="font-extrabold text-sm sm:text-base">مختبر CBC</h3>
+                            <p class="text-xs text-slate-400 mt-1">5 حالات سريرية + محاكي القيم</p>
+                        </a>
+
+                        <a href="#section-wbc-platelets" class="glass-panel p-4 rounded-2xl border border-amber-500/25 hover:border-amber-400 transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-bacterium text-lg"></i>
+                            </div>
+                            <h3 class="font-extrabold text-sm sm:text-base">بكتيري أم فيروسي</h3>
+                            <p class="text-xs text-slate-400 mt-1">تحليل WBC والصفائح الدموية</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 1: INTERACTIVE BLOOD TYPING & CROSS-MATCHING SIMULATOR        -->
+    <!-- ===================================================================== -->
+    <section id="section-blood-typing" class="py-12 md:py-16 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-500/15 text-red-400 border border-red-500/30">
+                        الوحدة الأولى • علم المناعة الدموية
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black mt-2 flex items-center gap-3">
+                        <i class="fa-solid fa-vial-circle-check text-red-500"></i>
+                        مختبر فصائل الدم والمطابقة التفاعلي
+                    </h2>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-md">
+                    اختر فصيلة الدم لمشاهدة تفاعل التلازن (Agglutination) على الشريحة الزجاجية، ثم اختبر التوافق بين المتبرع والمستقبل.
+                </p>
+            </div>
+
+            <!-- Bento Grid for Blood Typing -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Part A: Agglutination Slide Simulator (7 Cols) -->
+                <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 border border-red-500/20">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-lg sm:text-xl font-extrabold flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-sm">1</span>
+                            محاكي شريحة التلازن (<span class="font-mono text-red-400">Agglutination Slide</span>)
+                        </h3>
+                        <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-mono">ABO + Rh System</span>
+                    </div>
+
+                    <!-- Blood Type Selector Buttons -->
+                    <p class="text-xs sm:text-sm text-slate-400 mb-3 font-semibold">اختر فصيلة دم المريض لفحصها مخبرياً:</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-6" id="blood-type-buttons">
+                        <!-- Generated via JS -->
+                    </div>
+
+                    <!-- Glass Microscope Slide Simulation -->
+                    <div class="rounded-2xl bg-gradient-to-b from-slate-800/80 to-slate-900/90 border-2 border-cyan-500/30 p-5 sm:p-6 relative shadow-inner">
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-4 pb-2 border-b border-slate-700/60">
+                            <span><i class="fa-solid fa-microscope text-cyan-400 ml-1"></i> شريحة الفحص الزجاجية (Glass Slide)</span>
+                            <span id="selected-blood-badge" class="font-mono font-bold text-base px-3 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 ltr-num">A+</span>
+                        </div>
+
+                        <!-- 3 Wells: Anti-A, Anti-B, Anti-D -->
+                        <div class="grid grid-cols-3 gap-3 sm:gap-6 text-center">
+                            <!-- Well Anti-A -->
+                            <div class="flex flex-col items-center">
+                                <span class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 font-mono text-xs font-bold mb-2 border border-blue-500/30">Anti-A</span>
+                                <div id="well-anti-a" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-slate-600 bg-red-950/50 flex items-center justify-center relative overflow-hidden shadow-inner">
+                                    <!-- Dynamic Dots -->
+                                </div>
+                                <span id="label-anti-a" class="mt-2 text-xs font-bold text-red-400">تلازن (+)</span>
+                            </div>
+
+                            <!-- Well Anti-B -->
+                            <div class="flex flex-col items-center">
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-mono text-xs font-bold mb-2 border border-amber-500/30">Anti-B</span>
+                                <div id="well-anti-b" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-slate-600 bg-red-950/50 flex items-center justify-center relative overflow-hidden shadow-inner">
+                                    <!-- Dynamic Dots -->
+                                </div>
+                                <span id="label-anti-b" class="mt-2 text-xs font-bold text-emerald-400">متجانس (-)</span>
+                            </div>
+
+                            <!-- Well Anti-D (Rh) -->
+                            <div class="flex flex-col items-center">
+                                <span class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 font-mono text-xs font-bold mb-2 border border-purple-500/30">Anti-D (Rh)</span>
+                                <div id="well-anti-d" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-slate-600 bg-red-950/50 flex items-center justify-center relative overflow-hidden shadow-inner">
+                                    <!-- Dynamic Dots -->
+                                </div>
+                                <span id="label-anti-d" class="mt-2 text-xs font-bold text-red-400">تلازن (+)</span>
+                            </div>
+                        </div>
+
+                        <!-- Scientific Breakdown of Antigens & Antibodies -->
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-slate-700/60">
+                            <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                                <div class="text-[11px] text-slate-400">المستضدات على سطح الكرية الحمراء (<span class="font-mono">RBC Antigens</span>)</div>
+                                <div id="blood-antigens" class="text-sm sm:text-base font-extrabold text-cyan-400 mt-1">Antigen A + Rh(D)</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                                <div class="text-[11px] text-slate-400">الأجسام المضادة في البلازما (<span class="font-mono">Plasma Antibodies</span>)</div>
+                                <div id="blood-antibodies" class="text-sm sm:text-base font-extrabold text-amber-400 mt-1">Anti-B فقط</div>
+                            </div>
+                        </div>
+                        <div id="blood-role-note" class="mt-3 text-xs text-slate-300 bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3">
+                            <!-- Role Note -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part B: Interactive Cross-Matching Checker (5 Cols) -->
+                <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 border border-cyan-500/20 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm">2</span>
+                            فاحص التوافق (<span class="font-mono text-cyan-400">Cross-Matching</span>)
+                        </h3>
+                        <p class="text-xs text-slate-400 mb-5">اختبر نقل <strong>كريات الدم الحمراء المكدسة (PRBCs)</strong> من متبرع إلى مستقبل:</p>
+
+                        <!-- Donor & Recipient Selectors -->
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            <div class="p-3.5 rounded-2xl glass-panel border border-slate-700">
+                                <label class="block text-xs font-bold text-slate-400 mb-1.5">
+                                    <i class="fa-solid fa-hand-holding-droplet text-red-400 ml-1"></i> فصيلة المتبرع (Donor)
+                                </label>
+                                <select id="donor-select" onchange="checkCompatibility()" class="w-full bg-slate-900 text-white font-mono font-bold text-base p-2.5 rounded-xl border border-slate-600 focus:border-cyan-400 outline-none ltr-num">
+                                    <option value="O-">O- (معطي عام)</option>
+                                    <option value="O+">O+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="A+" selected>A+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="AB+">AB+ (مستقبل عام)</option>
+                                </select>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl glass-panel border border-slate-700">
+                                <label class="block text-xs font-bold text-slate-400 mb-1.5">
+                                    <i class="fa-solid fa-bed-pulse text-cyan-400 ml-1"></i> فصيلة المستقبل (Recipient)
+                                </label>
+                                <select id="recipient-select" onchange="checkCompatibility()" class="w-full bg-slate-900 text-white font-mono font-bold text-base p-2.5 rounded-xl border border-slate-600 focus:border-cyan-400 outline-none ltr-num">
+                                    <option value="O-">O-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="B+" selected>B+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="AB+">AB+ (مستقبل عام)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Compatibility Result Box -->
+                        <div id="compatibility-result" class="rounded-2xl p-5 border-2 transition-all duration-300">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Golden Rule Box: RBCs vs Plasma -->
+                    <div class="mt-5 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-2">
+                        <div class="font-extrabold text-amber-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> قاعدة ذهبية للامتحان والسريريات:
+                        </div>
+                        <p class="text-slate-300 leading-relaxed">
+                            • <strong>نقل كريات الدم الحمراء (PRBCs):</strong> المعطي العام هو <span class="font-mono font-bold text-emerald-400 ltr-num">O-</span> (لخلو سطحه من أي مستضدات)، والمستقبل العام هو <span class="font-mono font-bold text-cyan-400 ltr-num">AB+</span>.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed">
+                            • <strong>نقل البلازما الطازجة المجمدة (FFP):</strong> تنعكس القاعدة تماماً! فصيلة <span class="font-mono font-bold text-amber-300 ltr-num">AB</span> هي المعطي العام للبلازما (لخلو بلازماها من الأجسام المضادة Anti-A و Anti-B).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 2: CLINICAL BLOOD TRANSFUSION PROTOCOL (PRE, DURING, POST)    -->
+    <!-- ===================================================================== -->
+    <section id="section-protocol" class="py-12 md:py-16 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        الوحدة الثانية • البروتوكول التمريضي والسريري
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black mt-2 flex items-center gap-3">
+                        <i class="fa-solid fa-notes-medical text-emerald-400"></i>
+                        آلية التعامل مع نقل الدم (قبل، أثناء، وبعد الإعطاء) والقواعد
+                    </h2>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-md">
+                    تنقل بين المراحل الزمنية الثلاث لإتقان إجراءات السلامة ومنع المضاعفات القاتلة أثناء نقل الدم.
+                </p>
+            </div>
+
+            <!-- Interactive Timeline Phase Tabs -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <button onclick="switchProtocolTab('pre')" id="tab-pre" class="protocol-tab p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-500/15 text-right transition-all flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg shrink-0">1</div>
+                    <div>
+                        <div class="text-xs text-emerald-300 font-bold">المرحلة الأولى</div>
+                        <div class="text-base font-extrabold">ما قبل نقل الدم (Pre-Transfusion)</div>
+                    </div>
+                </button>
+
+                <button onclick="switchProtocolTab('during')" id="tab-during" class="protocol-tab p-4 rounded-2xl border border-slate-700 glass-panel text-right transition-all flex items-center gap-3 hover:border-cyan-500/50">
+                    <div class="w-11 h-11 rounded-xl bg-slate-800 text-cyan-400 font-black flex items-center justify-center text-lg shrink-0">2</div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-bold">المرحلة الثانية</div>
+                        <div class="text-base font-extrabold">أثناء نقل الدم (During Transfusion)</div>
+                    </div>
+                </button>
+
+                <button onclick="switchProtocolTab('post')" id="tab-post" class="protocol-tab p-4 rounded-2xl border border-slate-700 glass-panel text-right transition-all flex items-center gap-3 hover:border-purple-500/50">
+                    <div class="w-11 h-11 rounded-xl bg-slate-800 text-purple-400 font-black flex items-center justify-center text-lg shrink-0">3</div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-bold">المرحلة الثالثة</div>
+                        <div class="text-base font-extrabold">ما بعد نقل الدم (Post-Transfusion)</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Protocol Content Container -->
+            <div id="protocol-content" class="glass-card rounded-3xl p-6 sm:p-8 border border-emerald-500/25">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 3: INTERACTIVE CBC ANALYZER & CASE STUDIES                    -->
+    <!-- ===================================================================== -->
+    <section id="section-cbc" class="py-12 md:py-16 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                        الوحدة الثالثة • قراءة التحاليل المخبرية
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black mt-2 flex items-center gap-3">
+                        <i class="fa-solid fa-file-waveform text-cyan-400"></i>
+                        قارئ ومحلل صورة الدم الكاملة (<span class="font-mono text-cyan-400">CBC Analyzer</span>)
+                    </h2>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-md">
+                    استعرض 5 حالات سريرية واقعية (طبيعية ومرضية) أو استخدم المختبر التفاعلي لتعديل القيم ومشاهدة التشخيص الفوري.
+                </p>
+            </div>
+
+            <!-- Mode Switcher: Case Studies vs Live Sandbox -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-cyan-500/20">
+                <!-- Case Study Selector Pills -->
+                <div class="flex flex-wrap items-center gap-2 pb-6 mb-6 border-b border-slate-700/60" id="cbc-case-buttons">
+                    <!-- Generated by JS -->
+                </div>
+
+                <!-- Main CBC Dashboard Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Left/Right 7 Cols: Lab Report Table & Visual Bars -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                            <div>
+                                <span class="text-xs text-cyan-400 font-bold">تقرير المختبر السريري</span>
+                                <h3 id="cbc-case-title" class="text-lg sm:text-xl font-extrabold mt-0.5">حالة طبيعية (Normal Adult Profile)</h3>
+                            </div>
+                            <span id="cbc-case-badge" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                نتائج طبيعية
+                            </span>
+                        </div>
+
+                        <!-- Parameters List -->
+                        <div id="cbc-parameters-list" class="space-y-3">
+                            <!-- Parameter cards rendered via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 5 Cols: Clinical Interpretation & Interactive Sandbox Sliders -->
+                    <div class="lg:col-span-5 flex flex-col gap-5">
+                        <!-- Clinical Diagnosis Card -->
+                        <div id="cbc-interpretation-box" class="p-5 rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900 border border-cyan-500/30 space-y-3">
+                            <div class="flex items-center gap-2 text-cyan-400 font-extrabold text-base">
+                                <i class="fa-solid fa-stethoscope"></i>
+                                <span>التفسير الطبي والتمريضي للحالة:</span>
+                            </div>
+                            <p id="cbc-clinical-summary" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                            <div id="cbc-nursing-action" class="p-3 rounded-xl bg-slate-950/60 border border-slate-700/80 text-xs text-emerald-300 leading-relaxed"></div>
+                        </div>
+
+                        <!-- Interactive "Try It Yourself" Simulator -->
+                        <div class="p-5 rounded-2xl glass-panel border border-purple-500/30 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-extrabold text-sm sm:text-base text-purple-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-sliders"></i> جرّب بنفسك (عدّل القيم بالمؤشر):
+                                </h4>
+                                <button onclick="loadCbcCase(0)" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+                                    إعادة للطبيعي
+                                </button>
+                            </div>
+
+                            <!-- Sliders -->
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>الهيموغلوبين (<span class="font-mono">Hb</span>): <span class="text-slate-400 font-normal">(الطبيعي: 12-17)</span></span>
+                                        <span id="val-hb" class="font-mono text-cyan-400 ltr-num">14.5 g/dL</span>
+                                    </div>
+                                    <input type="range" id="slider-hb" min="5" max="20" step="0.5" value="14.5" oninput="updateCustomCbc()">
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>حجم الكرية (<span class="font-mono">MCV</span>): <span class="text-slate-400 font-normal">(الطبيعي: 80-100)</span></span>
+                                        <span id="val-mcv" class="font-mono text-cyan-400 ltr-num">88 fL</span>
+                                    </div>
+                                    <input type="range" id="slider-mcv" min="55" max="115" step="1" value="88" oninput="updateCustomCbc()">
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>كريات الدم البيضاء (<span class="font-mono">WBC</span>): <span class="text-slate-400 font-normal">(الطبيعي: 4-11)</span></span>
+                                        <span id="val-wbc" class="font-mono text-cyan-400 ltr-num">7.2 ×10³/µL</span>
+                                    </div>
+                                    <input type="range" id="slider-wbc" min="1.5" max="28" step="0.5" value="7.2" oninput="updateCustomCbc()">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <div class="flex justify-between font-bold mb-1">
+                                            <span>العدلات <span class="font-mono">Neut%</span></span>
+                                            <span id="val-neut" class="font-mono text-amber-400 ltr-num">58%</span>
+                                        </div>
+                                        <input type="range" id="slider-neut" min="15" max="92" step="1" value="58" oninput="updateCustomCbc()">
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between font-bold mb-1">
+                                            <span>الليمفاوية <span class="font-mono">Lymph%</span></span>
+                                            <span id="val-lymph" class="font-mono text-emerald-400 ltr-num">32%</span>
+                                        </div>
+                                        <input type="range" id="slider-lymph" min="8" max="80" step="1" value="32" oninput="updateCustomCbc()">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>الصفائح الدموية (<span class="font-mono">Platelets</span>): <span class="text-slate-400 font-normal">(150-450)</span></span>
+                                        <span id="val-plt" class="font-mono text-cyan-400 ltr-num">260 ×10³/µL</span>
+                                    </div>
+                                    <input type="range" id="slider-plt" min="15" max="650" step="5" value="260" oninput="updateCustomCbc()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 4: BACTERIAL VS VIRAL (WBC DIFFERENTIAL) & PLATELETS          -->
+    <!-- ===================================================================== -->
+    <section id="section-wbc-platelets" class="py-12 md:py-16 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            
+            <!-- Part 1: Bacterial vs Viral WBC Battle -->
+            <div>
+                <div class="mb-8">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                        الوحدة الرابعة • المناعة والتخثر
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black mt-2 flex items-center gap-3">
+                        <i class="fa-solid fa-shield-virus text-amber-400"></i>
+                        كيف نميّز العدوى البكتيرية عن الفيروسية من كريات الدم البيضاء؟
+                    </h2>
+                </div>
+
+                <!-- Side-by-Side Comparison Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Bacterial Infection Card -->
+                    <div class="glass-card rounded-3xl p-6 sm:p-8 border-2 border-amber-500/30 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">
+                                    <i class="fa-solid fa-bacterium"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-amber-400">العدوى البكتيرية</h3>
+                                    <span class="font-mono text-xs text-slate-400">Bacterial Infection (e.g., Pneumonia, Appendicitis)</span>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-300">Neutrophilia</span>
+                        </div>
+
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-300">
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-arrow-trend-up text-red-400 mt-1"></i>
+                                <div>
+                                    <strong>العدد الكلي لـ <span class="font-mono">WBC</span>:</strong> يرتفع بشكل ملحوظ (<span class="font-mono text-amber-400 ltr-num">&gt; 11,000 /µL</span>) وتُسمى الحالة <span class="font-mono text-cyan-400">Leukocytosis</span>.
+                                </div>
+                            </li>
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-crosshairs text-amber-400 mt-1"></i>
+                                <div>
+                                    <strong>الخلية المسيطرة — العدلات (<span class="font-mono text-amber-400">Neutrophils</span>):</strong> ترتفع نسبتها فوق <span class="font-mono ltr-num">70% - 75%</span> لأنها خط الدفاع الأول الذي يبتلع البكتيريا (Phagocytosis) ويُكوّن القيح (Pus).
+                                </div>
+                            </li>
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-angles-left text-purple-400 mt-1"></i>
+                                <div>
+                                    <strong>ظاهرة الانزياح لليسار (<span class="font-mono text-purple-300">Shift to the Left</span>):</strong> يضطر نخاع العظم لإطلاق عدلات غير ناضجة (<span class="font-mono">Bands</span>) لمواجهة شدة العدوى البكتيرية.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Viral Infection Card -->
+                    <div class="glass-card rounded-3xl p-6 sm:p-8 border-2 border-cyan-500/30 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xl">
+                                    <i class="fa-solid fa-virus"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-cyan-400">العدوى الفيروسية</h3>
+                                    <span class="font-mono text-xs text-slate-400">Viral Infection (e.g., Influenza, COVID-19, Hepatitis)</span>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-cyan-500/20 text-cyan-300">Lymphocytosis</span>
+                        </div>
+
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-300">
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-arrow-trend-down text-cyan-400 mt-1"></i>
+                                <div>
+                                    <strong>العدد الكلي لـ <span class="font-mono">WBC</span>:</strong> يكون <strong>طبيعياً أو منخفضاً</strong> (<span class="font-mono text-cyan-400 ltr-num">&lt; 4,000 /µL</span>) وتُسمى الحالة <span class="font-mono text-cyan-400">Leukopenia</span>.
+                                </div>
+                            </li>
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-dna text-emerald-400 mt-1"></i>
+                                <div>
+                                    <strong>الخلية المسيطرة — الليمفاوية (<span class="font-mono text-emerald-400">Lymphocytes</span>):</strong> ترتفع نسبتها فوق <span class="font-mono ltr-num">40% - 45%</span> لأن الفيروسات تختبئ داخل الخلايا، والخلايا الليمفاوية (T & B Cells) هي المتخصصة في تدمير الخلايا المصابة بالفيروسات.
+                                </div>
+                            </li>
+                            <li class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-start gap-2.5">
+                                <i class="fa-solid fa-ban text-red-400 mt-1"></i>
+                                <div>
+                                    <strong>الأهمية السريرية:</strong> هذا التمييز يمنع الصرف العشوائي للمضادات الحيوية (Antibiotics) التي لا تؤثر إطلاقاً على الفيروسات!
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Summary of All 5 WBC Types (NLMEB) -->
+                <div class="glass-card rounded-3xl p-6 border border-slate-700/60">
+                    <h4 class="text-sm sm:text-base font-extrabold mb-4 text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-cyan-400"></i>
+                        الأنواع الخمسة لكريات الدم البيضاء (<span class="font-mono text-cyan-400">WBC Differential: Never Let Monkeys Eat Bananas</span>):
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+                        <div class="p-3.5 rounded-2xl glass-panel border-t-4 border-amber-500">
+                            <div class="flex justify-between font-extrabold text-amber-400 mb-1">
+                                <span>1. Neutrophils</span>
+                                <span class="font-mono ltr-num">50–70%</span>
+                            </div>
+                            <p class="text-slate-300">العدلات: الأكثر عدداً، ترتفع في <strong>العدوى البكتيرية الحادة</strong> والالتهابات.</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl glass-panel border-t-4 border-cyan-500">
+                            <div class="flex justify-between font-extrabold text-cyan-400 mb-1">
+                                <span>2. Lymphocytes</span>
+                                <span class="font-mono ltr-num">20–40%</span>
+                            </div>
+                            <p class="text-slate-300">الليمفاوية: ترتفع في <strong>العدوى الفيروسية</strong> (المناعة الخلوية والخلطية).</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl glass-panel border-t-4 border-purple-500">
+                            <div class="flex justify-between font-extrabold text-purple-400 mb-1">
+                                <span>3. Monocytes</span>
+                                <span class="font-mono ltr-num">2–8%</span>
+                            </div>
+                            <p class="text-slate-300">الوحيدات: تتحول إلى Macrophages، ترتفع في <strong>العدوى المزمنة</strong> (مثل السل).</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl glass-panel border-t-4 border-emerald-500">
+                            <div class="flex justify-between font-extrabold text-emerald-400 mb-1">
+                                <span>4. Eosinophils</span>
+                                <span class="font-mono ltr-num">1–4%</span>
+                            </div>
+                            <p class="text-slate-300">الحمضات: ترتفع في <strong>الحساسية والربو</strong> والإصابة <strong>بالطفيليات والديدان</strong>.</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl glass-panel border-t-4 border-rose-500">
+                            <div class="flex justify-between font-extrabold text-rose-400 mb-1">
+                                <span>5. Basophils</span>
+                                <span class="font-mono ltr-num">0.5–1%</span>
+                            </div>
+                            <p class="text-slate-300">القعدات: الأقل عدداً، تفرز <strong>الهيستامين والهيبارين</strong> في تفاعلات التحسس الشديد.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part 2: Platelets (Thrombocytes) Comprehensive Section -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-rose-500/25">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-700/60">
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            الإرقاء وتجلط الدم (Hemostasis)
+                        </span>
+                        <h3 class="text-2xl sm:text-3xl font-black mt-2 flex items-center gap-3">
+                            <i class="fa-solid fa-bandage text-rose-400"></i>
+                            الصفائح الدموية (<span class="font-mono text-rose-400">Platelets / Thrombocytes</span>)
+                        </h3>
+                    </div>
+                    <div class="px-5 py-3 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
+                        <div class="text-xs text-slate-400">المعدل الطبيعي في الدم</div>
+                        <div class="text-lg sm:text-xl font-black font-mono text-cyan-400 ltr-num">150,000 – 450,000 /µL</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Anatomy & Physiology -->
+                    <div class="p-5 rounded-2xl glass-panel border border-slate-700 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-puzzle-piece"></i>
+                        </div>
+                        <h4 class="font-extrabold text-base sm:text-lg text-cyan-400">التركيب والوظيفة الفسيولوجية</h4>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            ليست خلايا كاملة، بل هي <strong>شظايا سيتوبلازمية</strong> عديمة النواة تنشأ في نخاع العظم من خلايا عملاقة تُسمى <span class="font-mono text-cyan-300">Megakaryocytes</span>، وعمرها في الدورة الدموية من <strong>7 إلى 10 أيام</strong>.
+                        </p>
+                        <div class="p-3 rounded-xl bg-slate-900/70 text-xs text-slate-300">
+                            <strong>الوظيفة الأساسية:</strong> عند تمزق الوعاء الدموي، تلتصق الصفائح وتتجمع لتكوين <strong>السدادة الصفائحية الأولية (Primary Platelet Plug)</strong> وتنشّط عوامل التجلط لإيقاف النزيف.
+                        </div>
+                    </div>
+
+                    <!-- Thrombocytopenia (Low Platelets) -->
+                    <div class="p-5 rounded-2xl glass-panel border border-red-500/30 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-droplet-slash"></i>
+                        </div>
+                        <h4 class="font-extrabold text-base sm:text-lg text-red-400">نقص الصفائح (<span class="font-mono">Thrombocytopenia</span>)</h4>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            انخفاض العدد عن <span class="font-mono text-red-400 font-bold ltr-num">150,000 /µL</span> (بسبب حمى الضنك، العلاج الكيميائي، تليف الكبد، أو ITP).
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-1.5">
+                            <li>• <strong>الأعراض:</strong> نقط نزفية تحت الجلد (<span class="font-mono text-rose-300">Petechiae</span>)، كدمات (<span class="font-mono text-rose-300">Ecchymosis</span>)، رعاف، ونزيف اللثة.</li>
+                            <li class="p-2.5 rounded-xl bg-red-950/50 border border-red-500/30 text-red-200 font-bold">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 ml-1"></i>
+                                تحذير سريري: تحت <span class="font-mono ltr-num">50,000</span> خطر نزيف جراحي، وتحت <span class="font-mono ltr-num">20,000</span> خطر نزيف دماغي تلقائي (تُمنع الحقن العضلية IM).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Thrombocytosis (High Platelets) -->
+                    <div class="p-5 rounded-2xl glass-panel border border-amber-500/30 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-heart-circle-exclamation"></i>
+                        </div>
+                        <h4 class="font-extrabold text-base sm:text-lg text-amber-400">ارتفاع الصفائح (<span class="font-mono">Thrombocytosis</span>)</h4>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            ارتفاع العدد فوق <span class="font-mono text-amber-400 font-bold ltr-num">450,000 /µL</span> (بعد استئصال الطحال، الالتهابات المزمنة، أو اضطرابات نخاع العظم).
+                        </p>
+                        <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-500/20 text-xs text-slate-300 space-y-1.5">
+                            <div>• <strong>الخطر الرئيسي:</strong> زيادة لزوجة الدم وتكوين <strong>جلطات دموية (Thrombosis)</strong> في الأوردة العميقة (DVT) أو الشرايين التاجية والدماغية.</div>
+                            <div>• <strong>التدخل:</strong> إعطاء مميعات ومضادات تكدس الصفائح (مثل الأسبرين) حسب أمر الطبيب.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-slate-800 glass-card">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-400">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-university"></i>
+                </div>
+                <div>
+                    <div class="font-extrabold text-slate-200">جامعة فلسطين — برامج الدبلوم المتوسط</div>
+                    <div>مساق علم التشريح ووظائف الأعضاء 1 | إعداد وتنفيذ: <span class="text-cyan-400 font-bold">م. محمد أبو خليل</span></div>
+                </div>
+            </div>
+            <div class="text-center sm:text-left text-xs text-slate-500">
+                منصة تعليمية تفاعلية مخصصة للتدريب السريري والمخبري
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT INTERACTIVE LOGIC                                          -->
+    <!-- ===================================================================== -->
+    <script>
+        // ---------------------------------------------------------------------
+        // 1. THEME TOGGLE (DARK / LIGHT)
+        // ---------------------------------------------------------------------
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun text-amber-400';
+            } else {
+                icon.className = 'fa-solid fa-moon text-slate-700';
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // 2. BLOOD TYPING & AGGLUTINATION SIMULATOR DATA & LOGIC
+        // ---------------------------------------------------------------------
+        const bloodData = {
+            'A+':  { antiA: true,  antiB: false, antiD: true,  antigens: 'Antigen A + Rh(D)', antibodies: 'Anti-B فقط', note: 'يستقبل كريات دم حمراء من: A+, A-, O+, O- | ويتبرع لـ: A+, AB+' },
+            'A-':  { antiA: true,  antiB: false, antiD: false, antigens: 'Antigen A فقط (سالب Rh)', antibodies: 'Anti-B (ويكوّن Anti-D عند التعرض)', note: 'يستقبل كريات دم حمراء من: A-, O- فقط | ويتبرع لـ: A+, A-, AB+, AB-' },
+            'B+':  { antiA: false, antiB: true,  antiD: true,  antigens: 'Antigen B + Rh(D)', antibodies: 'Anti-A فقط', note: 'يستقبل كريات دم حمراء من: B+, B-, O+, O- | ويتبرع لـ: B+, AB+' },
+            'B-':  { antiA: false, antiB: true,  antiD: false, antigens: 'Antigen B فقط (سالب Rh)', antibodies: 'Anti-A (ويكوّن Anti-D عند التعرض)', note: 'يستقبل كريات دم حمراء من: B-, O- فقط | ويتبرع لـ: B+, B-, AB+, AB-' },
+            'AB+': { antiA: true,  antiB: true,  antiD: true,  antigens: 'Antigen A + Antigen B + Rh(D)', antibodies: 'لا يوجد (خالية من Anti-A و Anti-B)', note: 'المستقبل العام لكريات الدم الحمراء (يستقبل من جميع الفصائل الثمانية بأمان).' },
+            'AB-': { antiA: true,  antiB: true,  antiD: false, antigens: 'Antigen A + Antigen B فقط', antibodies: 'لا يوجد Anti-A أو Anti-B', note: 'يستقبل كريات دم حمراء من جميع الفصائل السالبة: AB-, A-, B-, O-' },
+            'O+':  { antiA: false, antiB: false, antiD: true,  antigens: 'Rh(D) فقط (خالية من A و B)', antibodies: 'Anti-A + Anti-B', note: 'يستقبل من: O+, O- فقط | ويتبرع لجميع الفصائل الموجبة: O+, A+, B+, AB+' },
+            'O-':  { antiA: false, antiB: false, antiD: false, antigens: 'لا يوجد أي مستضدات على السطح', antibodies: 'Anti-A + Anti-B', note: 'المعطي العام (Universal Donor) لكريات الدم الحمراء في حالات الطوارئ، لكنه لا يستقبل إلا من O- فقط!' }
+        };
+
+        let currentSelectedBlood = 'A+';
+
+        function initBloodButtons() {
+            const container = document.getElementById('blood-type-buttons');
+            container.innerHTML = '';
+            Object.keys(bloodData).forEach(type => {
+                const btn = document.createElement('button');
+                btn.textContent = type;
+                btn.className = `blood-btn py-2.5 rounded-xl font-mono font-extrabold text-sm sm:text-base transition-all ltr-num border ${
+                    type === currentSelectedBlood 
+                    ? 'bg-red-600 text-white border-red-400 shadow-lg shadow-red-600/30 scale-105' 
+                    : 'glass-panel text-slate-300 border-slate-700 hover:border-red-400/60'
+                }`;
+                btn.onclick = () => selectBloodType(type);
+                container.appendChild(btn);
+            });
+            selectBloodType(currentSelectedBlood);
+        }
+
+        function renderWell(wellId, labelId, isClumped) {
+            const well = document.getElementById(wellId);
+            const label = document.getElementById(labelId);
+            well.innerHTML = '';
+
+            if (isClumped) {
+                // Agglutinated (Clumped dots gathered together with clear background)
+                well.className = 'w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-red-500 bg-rose-200/15 flex items-center justify-center relative overflow-hidden shadow-inner transition-all';
+                label.textContent = 'تلازن / تخثر (+)';
+                label.className = 'mt-2 text-xs font-extrabold text-red-400';
+
+                const positions = [
+                    {t: '25%', l: '30%', s: '14px'}, {t: '32%', l: '45%', s: '16px'},
+                    {t: '45%', l: '28%', s: '15px'}, {t: '55%', l: '55%', s: '17px'},
+                    {t: '62%', l: '40%', s: '14px'}, {t: '38%', l: '60%', s: '13px'},
+                    {t: '22%', l: '52%', s: '12px'}, {t: '65%', l: '62%', s: '12px'}
+                ];
+                positions.forEach(p => {
+                    const dot = document.createElement('span');
+                    dot.style.cssText = `position:absolute; top:${p.t}; left:${p.l}; width:${p.s}; height:${p.s}; background:#dc2626; border-radius:50%; box-shadow: 0 0 4px #7f1d1d;`;
+                    well.appendChild(dot);
+                });
+            } else {
+                // Smooth homogeneous red blood suspension
+                well.className = 'w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-emerald-500/60 bg-gradient-to-br from-red-600/80 to-red-800/90 flex items-center justify-center relative overflow-hidden shadow-inner transition-all';
+                label.textContent = 'متجانس / سليم (-)';
+                label.className = 'mt-2 text-xs font-extrabold text-emerald-400';
+                well.innerHTML = '<span class="text-[10px] text-red-100/80 font-semibold">سائل متجانس</span>';
+            }
+        }
+
+        function selectBloodType(type) {
+            currentSelectedBlood = type;
+            const data = bloodData[type];
+
+            // Update button active state
+            document.querySelectorAll('.blood-btn').forEach(btn => {
+                if (btn.textContent === type) {
+                    btn.className = 'blood-btn py-2.5 rounded-xl font-mono font-extrabold text-sm sm:text-base transition-all ltr-num border bg-red-600 text-white border-red-400 shadow-lg shadow-red-600/30 scale-105';
+                } else {
+                    btn.className = 'blood-btn py-2.5 rounded-xl font-mono font-extrabold text-sm sm:text-base transition-all ltr-num border glass-panel text-slate-300 border-slate-700 hover:border-red-400/60';
+                }
+            });
+
+            document.getElementById('selected-blood-badge').textContent = type;
+            renderWell('well-anti-a', 'label-anti-a', data.antiA);
+            renderWell('well-anti-b', 'label-anti-b', data.antiB);
+            renderWell('well-anti-d', 'label-anti-d', data.antiD);
+
+            document.getElementById('blood-antigens').textContent = data.antigens;
+            document.getElementById('blood-antibodies').textContent = data.antibodies;
+            document.getElementById('blood-role-note').innerHTML = `<i class="fa-solid fa-circle-info text-cyan-400 ml-1"></i> ${data.note}`;
+        }
+
+        // Cross-Matching Compatibility Checker
+        function checkCompatibility() {
+            const donor = document.getElementById('donor-select').value;
+            const recipient = document.getElementById('recipient-select').value;
+            const resultBox = document.getElementById('compatibility-result');
+
+            const dHasA = donor.includes('A');
+            const dHasB = donor.includes('B');
+            const dHasRh = donor.includes('+');
+
+            const rHasA = recipient.includes('A');
+            const rHasB = recipient.includes('B');
+            const rHasRh = recipient.includes('+');
+
+            let conflictReasons = [];
+            if (dHasA && !rHasA) conflictReasons.push('المتبرع يحمل مستضد (A) والمستقبل لديه أجسام مضادة (Anti-A)');
+            if (dHasB && !rHasB) conflictReasons.push('المتبرع يحمل مستضد (B) والمستقبل لديه أجسام مضادة (Anti-B)');
+            if (dHasRh && !rHasRh) conflictReasons.push('المتبرع موجب العامل الريزيسي (Rh+) والمستقبل سالب (Rh-) مما يحفز تكوين Anti-D');
+
+            if (conflictReasons.length === 0) {
+                resultBox.className = 'rounded-2xl p-5 border-2 border-emerald-500 bg-emerald-500/15 transition-all';
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <div class="text-base sm:text-lg font-black text-emerald-400">نقل دم آمن ومتوافق (Compatible)</div>
+                            <div class="text-xs text-emerald-200 font-mono ltr-num">Donor (${donor}) ➔ Recipient (${recipient})</div>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-200 leading-relaxed mt-2">
+                        <strong>التفسير العلمي:</strong> لا توجد أجسام مضادة في بلازما المستقبل تهاجم مستضدات كريات الدم الحمراء للمتبرع. (يجب دائماً إجراء فحص التطابق المخبري <span class="font-mono">Cross-Match</span> قبل الإعطاء).
+                    </p>
+                `;
+            } else {
+                resultBox.className = 'rounded-2xl p-5 border-2 border-red-500 bg-red-500/15 transition-all';
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center text-lg shrink-0 animate-pulse">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <div class="text-base sm:text-lg font-black text-red-400">خطر! عدم توافق وتلازن انحلالي</div>
+                            <div class="text-xs text-red-200 font-mono ltr-num">Incompatible: Donor (${donor}) ➔ Recipient (${recipient})</div>
+                        </div>
+                    </div>
+                    <ul class="text-xs sm:text-sm text-red-100 space-y-1 mt-2 list-disc list-inside">
+                        ${conflictReasons.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                    <div class="mt-2 pt-2 border-t border-red-500/30 text-xs text-red-300 font-bold">
+                        النتيجة: تلازن وتكسر حاد لكريات الدم الحمراء (Acute Hemolytic Reaction) قد يؤدي للفشل الكلوي والوفاة!
+                    </div>
+                `;
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // 3. CLINICAL TRANSFUSION PROTOCOL TABS (PRE, DURING, POST)
+        // ---------------------------------------------------------------------
+        const protocolData = {
+            pre: {
+                color: 'emerald',
+                title: 'المرحلة الأولى: إجراءات ما قبل نقل الدم (Pre-Transfusion Protocol)',
+                subtitle: 'تُعد هذه المرحلة خط الدفاع الأول لمنع الأخطاء البشرية القاتلة (90% من حوادث نقل الدم سببها خطأ في التحقق من الهوية).',
+                steps: [
+                    { icon: 'fa-file-signature', title: '1. أمر الطبيب والموافقة المستنيرة', desc: 'التأكد من وجود أمر طبي مكتوب يحدد نوع الوحدة (PRBCs, Platelets, FFP) والكمية، وتوقيع المريض على نموذج الموافقة (Informed Consent).' },
+                    { icon: 'fa-user-check', title: '2. التحقق المزدوج (Double Check - Two Nurses)', desc: 'مراجعة مزدوجة من ممرضين اثنين عند سرير المريض لمطابقة: اسم المريض الرباعي، رقم الملف، فصيلة الدم ABO/Rh، الرقم التسلسلي للكيس، وتاريخ الصلاحية.' },
+                    { icon: 'fa-eye', title: '3. الفحص البصري لكيس الدم', desc: 'فحص الكيس للتأكد من عدم وجود تسريب، فقاعات غازية (دليل تلوث بكتيري)، تجلطات، أو تغير في اللون (لون داكن جداً أو وردي يدل على انحلال الدم).' },
+                    { icon: 'fa-heart-pulse', title: '4. العلامات الحيوية الأساسية (Baseline Vitals)', desc: 'قياس وتسجيل الحرارة، النبض، الضغط، والتنفس قبل البدء مباشرة (إذا كانت الحرارة مرتفعة > 38°C يجب إبلاغ الطبيب قبل النقل).' },
+                    { icon: 'fa-filter', title: '5. القسطرة الوريدية والفلتر والمحلول الوحيد المسموح', desc: 'استخدام كانيولا واسعة (18G - 20G) وجهاز إعطاء دم مزود بفلتر خاص (170-260 ميكرون). يُستخدم محلول ملحي طبيعي فقط (0.9% Normal Saline).' }
+                ],
+                warning: 'تحذير قاتل: يُمنع منعاً باتاً إعطاء أي دواء في نفس خط الدم، ويُمنع استخدام محلول Dextrose 5% (يسبب انحلال الدم Hemolysis) أو محلول Ringer Lactate (يحتوي على الكالسيوم الذي يبطل مفعول مانع التجلط ويسبب تجلط الدم في الأنبوب!).'
+            },
+            during: {
+                color: 'cyan',
+                title: 'المرحلة الثانية: المراقبة أثناء نقل الدم (During Transfusion Protocol)',
+                subtitle: 'الالتزام بالوقت والمراقبة اللصيقة خلال الدقائق الأولى ينقذ حياة المريض عند حدوث أي تفاعل مناعي حاد.',
+                steps: [
+                    { icon: 'fa-stopwatch', title: '1. قاعدة الـ 15 دقيقة الأولى الذهبية', desc: 'البدء بمعدل بطيء جداً (2 مل/دقيقة أو 15-20 نقطة/دقيقة) وبقاء الممرض بجانب المريض أول 15 دقيقة؛ لأن أخطر التفاعلات الانحلالية والتحسسية تحدث خلالها.' },
+                    { icon: 'fa-gauge-high', title: '2. رفع معدل التدفق والعلامات الحيوية', desc: 'بعد مرور 15 دقيقة بسلام، تُقاس العلامات الحيوية مرة أخرى، ثم يُرفع معدل التنقيط حسب حالة المريض (عادة 120-150 مل/ساعة) وتُقاس العلامات كل ساعة.' },
+                    { icon: 'fa-hourglass-half', title: '3. قاعدة الـ 4 ساعات القصوى', desc: 'يجب إنهاء نقل وحدة الدم خلال مدة لا تتجاوز 4 ساعات كحد أقصى من لحظة خروجها من ثلاجة بنك الدم لمنع تكاثر البكتيريا في درجة حرارة الغرفة.' },
+                    { icon: 'fa-hand-paper', title: '4. علامات الخطر (Transfusion Reaction Signs)', desc: 'راقب ظهور: قشعريرة، ارتفاع مفاجئ بالحرارة، ألم أسفل الظهر (Flank Pain)، ضيق تنفس، طفح جلدي/حكة، هبوط ضغط، أو بول أحمر داكن (Hemoglobinuria).' },
+                    { icon: 'fa-kit-medical', title: '5. التصرف الفوري عند حدوث تفاعل (STOP!)', desc: '1) أوقف نقل الدم فوراً. 2) افصل جهاز الدم وأبقِ الوريد مفتوحاً بمحلول Normal Saline جديد. 3) قس العلامات الحيوية وأبلغ الطبيب وبنك الدم. 4) أرسل الكيس المتبقي مع عينة دم وبول من المريض للمختبر.' }
+                ],
+                warning: 'ممنوع إعادة تشغيل كيس الدم بعد إيقافه للاشتباه بتفاعل انحلالي، وممنوع تمرير المحلول الملحي عبر نفس أنبوب الدم المملوء بالدم المتفاعل حتى لا تدفع ما تبقى منه لوريد المريض!'
+            },
+            post: {
+                color: 'purple',
+                title: 'المرحلة الثالثة: إجراءات ما بعد نقل الدم (Post-Transfusion Protocol)',
+                subtitle: 'لا تنتهي مسؤولية التمريض بانتهاء قطرات الكيس؛ التوثيق والمراقبة اللاحقة جزء أصيل من سلامة المريض.',
+                steps: [
+                    { icon: 'fa-faucet-drip', title: '1. غسل الخط الوريدي (Flushing)', desc: 'غسل القسطرة الوريدية بمحلول Normal Saline 0.9% للتأكد من وصول كامل كمية الدم المتبقية في الأنبوب والحفاظ على الوريد مفتوحاً.' },
+                    { icon: 'fa-temperature-half', title: '2. قياس العلامات الحيوية النهائية', desc: 'قياس الحرارة، الضغط، النبض، والتنفس فور انتهاء النقل، ثم بعد ساعة واحدة للتأكد من استقرار المريض وعدم وجود تفاعل متأخر.' },
+                    { icon: 'fa-biohazard', title: '3. التخلص الآمن من النفايات الطبية', desc: 'التخلص من كيس الدم الفارغ وأنبوب النقل في حاوية النفايات الطبية الخطرة (Biohazard Red Bag) وفق بروتوكول مكافحة العدوى.' },
+                    { icon: 'fa-file-pen', title: '4. التوثيق التمريضي الكامل (Documentation)', desc: 'توثيق وقت البدء والانتهاء، الرقم التسلسلي لوحدة الدم، نوع الفصيلة، العلامات الحيوية (قبل/أثناء/بعد)، وحالة المريض في السجل الطبي.' },
+                    { icon: 'fa-vial', title: '5. تقييم الفعالية السريرية (Post-Transfusion CBC)', desc: 'سحب عينة CBC بعد 1-4 ساعات من النقل لتقييم الاستجابة (كل وحدة PRBCs ترفع الهيموغلوبين بمقدار 1 g/dL والهيماتوكريت بنسبة 3% تقريباً).' }
+                ],
+                warning: 'معلومة سريرية هامة: راقب المريض خلال 24-48 ساعة لأي علامات فرط تحميل السوائل (TACO - ضيق تنفس وخشخشة بالرئتين) خاصة لدى كبار السن ومرضى القلب.'
+            }
+        };
+
+        function switchProtocolTab(phase) {
+            const tabs = ['pre', 'during', 'post'];
+            const colors = { pre: 'emerald', during: 'cyan', post: 'purple' };
+
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const c = colors[t];
+                if (t === phase) {
+                    btn.className = `protocol-tab p-4 rounded-2xl border-2 border-${c}-500 bg-${c}-500/15 text-right transition-all flex items-center gap-3 shadow-lg`;
+                } else {
+                    btn.className = `protocol-tab p-4 rounded-2xl border border-slate-700 glass-panel text-right transition-all flex items-center gap-3 opacity-75 hover:opacity-100`;
+                }
+            });
+
+            const data = protocolData[phase];
+            const container = document.getElementById('protocol-content');
+            container.innerHTML = `
+                <div class="mb-6 pb-4 border-b border-slate-700/60">
+                    <h3 class="text-xl sm:text-2xl font-black text-${data.color}-400">${data.title}</h3>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">${data.subtitle}</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    ${data.steps.map(step => `
+                        <div class="p-4 rounded-2xl glass-panel border border-slate-700/80 hover:border-${data.color}-400/50 transition-all">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <div class="w-9 h-9 rounded-xl bg-${data.color}-500/20 text-${data.color}-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid ${step.icon}"></i>
+                                </div>
+                                <h4 class="font-extrabold text-sm text-slate-100">${step.title}</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">${step.desc}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 flex items-start gap-3 text-xs sm:text-sm text-red-200">
+                    <i class="fa-solid fa-triangle-exclamation text-red-400 text-lg mt-0.5 shrink-0"></i>
+                    <div class="leading-relaxed font-semibold">${data.warning}</div>
+                </div>
+            `;
+        }
+
+        // ---------------------------------------------------------------------
+        // 4. INTERACTIVE CBC ANALYZER & 5 REALISTIC CASE STUDIES
+        // ---------------------------------------------------------------------
+        const cbcCases = [
+            {
+                name: '1. حالة طبيعية (Normal)',
+                title: 'حالة طبيعية لشخص بالغ سليم (Normal Adult CBC)',
+                badge: 'طبيعي 100%',
+                badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+                hb: 14.5, mcv: 88, wbc: 7.2, neut: 58, lymph: 32, plt: 260,
+                summary: 'جميع مؤشرات كريات الدم الحمراء (Hb, MCV)، وكريات الدم البيضاء وتعدادها التفريقي (Neutrophils & Lymphocytes)، والصفائح الدموية تقع ضمن النطاق المرجعي الطبيعي.',
+                nursing: '<strong>الإجراء التمريضي:</strong> طمأنة المراجع، لا حاجة لأي تدخل علاجي، والاستمرار على نمط الحياة والتغذية المتوازنة.'
+            },
+            {
+                name: '2. فقر دم بعوز الحديد',
+                title: 'فقر الدم بعوز الحديد (Iron Deficiency Anemia)',
+                badge: 'Microcytic Hypochromic',
+                badgeClass: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                hb: 8.2, mcv: 68, wbc: 6.5, neut: 55, lymph: 35, plt: 340,
+                summary: 'انخفاض واضح في الهيموغلوبين (Hb = 8.2 g/dL) مصحوب بصغر حجم الكرية الحمراء (MCV = 68 fL < 80)، وهو النمط الكلاسيكي لفقر الدم صغير الكريات ناقص الصباغ الناتج عن نقص الحديد.',
+                nursing: '<strong>الإجراء التمريضي:</strong> تقييم علامات الشحوب والتعب وتسارع النبض، إعطاء مكملات الحديد مع فيتامين C لزيادة الامتصاص (وبعيداً عن الشاي والحليب)، والبحث عن مصدر نزيف مزمن.'
+            },
+            {
+                name: '3. عدوى بكتيرية حادة',
+                title: 'عدوى بكتيرية حادة — التهاب الزائدة الدودية (Acute Bacterial Infection)',
+                badge: 'Leukocytosis + Neutrophilia',
+                badgeClass: 'bg-red-500/20 text-red-400 border-red-500/30',
+                hb: 13.8, mcv: 86, wbc: 18.5, neut: 84, lymph: 10, plt: 290,
+                summary: 'ارتفاع حاد في العدد الكلي لكريات الدم البيضاء (WBC = 18.5) مع سيطرة ساحقة للعدلات (Neutrophils = 84% > 75%). هذا النمط يؤكد وجود عدوى بكتيرية حادة.',
+                nursing: '<strong>الإجراء التمريضي:</strong> مراقبة الحرارة والعلامات الحيوية (خشية تطور الإنتان Sepsis)، تجهيز المريض للمضادات الحيوية الوريدية أو التدخل الجراحي حسب أمر الطبيب.'
+            },
+            {
+                name: '4. عدوى فيروسية حادة',
+                title: 'عدوى فيروسية حادة (Acute Viral Infection)',
+                badge: 'Leukopenia + Lymphocytosis',
+                badgeClass: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+                hb: 14.0, mcv: 89, wbc: 3.6, neut: 34, lymph: 56, plt: 195,
+                summary: 'انخفاض طفيف في كريات الدم البيضاء الكلية (WBC = 3.6 < 4.0) مع ارتفاع نسبة الخلايا الليمفاوية (Lymphocytes = 56% > 40%). هذا التوزيع يميز العدوى الفيروسية عن البكتيرية.',
+                nursing: '<strong>الإجراء التمريضي:</strong> الرعاية الداعمة (السوائل، خافضات الحرارة، الراحة)، تطبيق إجراءات العزل ومكافحة العدوى، وتثقيف المريض بعدم تناول المضادات الحيوية دون داعي.'
+            },
+            {
+                name: '5. نقص الصفائح الحاد',
+                title: 'نقص الصفائح الدموية الحاد (Severe Thrombocytopenia)',
+                badge: 'خطر نزيف حاد (Bleeding Risk)',
+                badgeClass: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+                hb: 11.5, mcv: 85, wbc: 6.1, neut: 60, lymph: 30, plt: 28,
+                summary: 'انخفاض خطير في الصفائح الدموية (Platelets = 28,000 /µL)، مما يعرض المريض لخطر النزيف التلقائي أو النزيف الغزير عند أي جرح بسيط.',
+                nursing: '<strong>الإجراء التمريضي (احتياطات النزيف):</strong> منع الحقن العضلية (IM)، استخدام فرشاة أسنان ناعمة، تجنب الأسبرين ومضادات الالتهاب (NSAIDs)، ومراقبة ظهور النقط النزفية (Petechiae) أو دم في البول/البراز، والاستعداد لنقل وحدات صفائح.'
+            }
+        ];
+
+        function initCbcButtons() {
+            const container = document.getElementById('cbc-case-buttons');
+            container.innerHTML = '';
+            cbcCases.forEach((c, idx) => {
+                const btn = document.createElement('button');
+                btn.textContent = c.name;
+                btn.id = `cbc-btn-${idx}`;
+                btn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all glass-panel border border-slate-700 hover:border-cyan-400';
+                btn.onclick = () => loadCbcCase(idx);
+                container.appendChild(btn);
+            });
+            loadCbcCase(0);
+        }
+
+        function loadCbcCase(index) {
+            const c = cbcCases[index];
+            document.querySelectorAll('#cbc-case-buttons button').forEach((b, i) => {
+                if (i === index) {
+                    b.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/25';
+                } else {
+                    b.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all glass-panel border border-slate-700 text-slate-300 hover:border-cyan-400';
+                }
+            });
+
+            // Sync Sliders
+            document.getElementById('slider-hb').value = c.hb;
+            document.getElementById('slider-mcv').value = c.mcv;
+            document.getElementById('slider-wbc').value = c.wbc;
+            document.getElementById('slider-neut').value = c.neut;
+            document.getElementById('slider-lymph').value = c.lymph;
+            document.getElementById('slider-plt').value = c.plt;
+
+            renderCbcDashboard({
+                title: c.title,
+                badge: c.badge,
+                badgeClass: c.badgeClass,
+                hb: c.hb, mcv: c.mcv, wbc: c.wbc, neut: c.neut, lymph: c.lymph, plt: c.plt,
+                summary: c.summary,
+                nursing: c.nursing
+            });
+        }
+
+        function updateCustomCbc() {
+            // Deselect preset buttons
+            document.querySelectorAll('#cbc-case-buttons button').forEach(b => {
+                b.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all glass-panel border border-slate-700 text-slate-300 hover:border-cyan-400';
+            });
+
+            const hb = parseFloat(document.getElementById('slider-hb').value);
+            const mcv = parseFloat(document.getElementById('slider-mcv').value);
+            const wbc = parseFloat(document.getElementById('slider-wbc').value);
+            const neut = parseFloat(document.getElementById('slider-neut').value);
+            const lymph = parseFloat(document.getElementById('slider-lymph').value);
+            const plt = parseFloat(document.getElementById('slider-plt').value);
+
+            let findings = [];
+            let actions = [];
+
+            if (hb < 12) {
+                let type = mcv < 80 ? 'صغير الكريات (Microcytic - مثل عوز الحديد)' : (mcv > 100 ? 'كبير الكريات (Macrocytic - مثل نقص B12)' : 'سوي الكريات (Normocytic)');
+                findings.push(`فقر دم (Anemia) من النوع ${type}`);
+                actions.push('تقييم أعراض نقص الأكسجة والبحث عن سبب فقر الدم.');
+            } else if (hb > 17.5) {
+                findings.push('احمرار الدم (Polycythemia)');
+                actions.push('تقييم حالة الجفاف أو نقص الأكسجة المزمن.');
+            }
+
+            if (wbc > 11 && neut > 70) {
+                findings.push('ارتفاع WBC مع زيادة العدلات (Neutrophilia) ➔ يرجح عدوى بكتيرية حادة');
+                actions.push('مراقبة الحرارة والعلامات الحيوية والتنسيق للمضاد الحيوي المناسب.');
+            } else if (wbc <= 11 && lymph > 42) {
+                findings.push('ارتفاع الخلايا الليمفاوية (Lymphocytosis) ➔ يرجح عدوى فيروسية');
+                actions.push('رعاية داعمة وسوائل وخافض حرارة (لا حاجة لمضاد حيوي).');
+            } else if (wbc < 4) {
+                findings.push('نقص كريات الدم البيضاء (Leukopenia) ➔ ضعف مناعي أو عدوى فيروسية');
+                actions.push('تطبيق احتياطات الوقاية من العدوى (Neutropenic Precautions).');
+            }
+
+            if (plt < 150) {
+                findings.push(`نقص الصفائح الدموية (Thrombocytopenia) ${plt < 50 ? '— خطر نزيف حاد!' : ''}`);
+                actions.push('تطبيق احتياطات النزيف ومنع الحقن العضلية (IM).');
+            } else if (plt > 450) {
+                findings.push('ارتفاع الصفائح الدموية (Thrombocytosis) ➔ خطر تجلطات');
+                actions.push('مراقبة علامات التجلط الوريدي العميق.');
+            }
+
+            const isNormal = findings.length === 0;
+            renderCbcDashboard({
+                title: 'تحليل مخصص (محاكاة الطالب المباشرة)',
+                badge: isNormal ? 'ضمن الطبيعي' : `${findings.length} ملاحظة سريرية`,
+                badgeClass: isNormal ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+                hb, mcv, wbc, neut, lymph, plt,
+                summary: isNormal ? 'جميع القيم التي قمت بضبطها تقع ضمن المعدلات الطبيعية للإنسان البالغ.' : findings.join(' • '),
+                nursing: isNormal ? '<strong>الإجراء التمريضي:</strong> لا توجد مؤشرات مرضية في هذه القيم.' : `<strong>التدخل التمريضي المقترح:</strong> ${actions.join(' ')}`
+            });
+        }
+
+        function renderCbcDashboard(data) {
+            document.getElementById('cbc-case-title').textContent = data.title;
+            const badge = document.getElementById('cbc-case-badge');
+            badge.textContent = data.badge;
+            badge.className = `px-3 py-1.5 rounded-xl text-xs font-extrabold border ${data.badgeClass}`;
+
+            // Update slider numeric labels
+            document.getElementById('val-hb').textContent = `${data.hb} g/dL`;
+            document.getElementById('val-mcv').textContent = `${data.mcv} fL`;
+            document.getElementById('val-wbc').textContent = `${data.wbc} ×10³/µL`;
+            document.getElementById('val-neut').textContent = `${data.neut}%`;
+            document.getElementById('val-lymph').textContent = `${data.lymph}%`;
+            document.getElementById('val-plt').textContent = `${data.plt} ×10³/µL`;
+
+            document.getElementById('cbc-clinical-summary').textContent = data.summary;
+            document.getElementById('cbc-nursing-action').innerHTML = data.nursing;
+
+            const params = [
+                { name: 'الهيموغلوبين (Hemoglobin - Hb)', val: data.hb, unit: 'g/dL', min: 12.0, max: 17.0, scaleMax: 20, desc: 'بروتين نقل الأكسجين في كريات الدم الحمراء' },
+                { name: 'متوسط حجم الكرية (MCV)', val: data.mcv, unit: 'fL', min: 80, max: 100, scaleMax: 120, desc: 'يحدد نوع فقر الدم (صغير، سوي، أم كبير الكريات)' },
+                { name: 'كريات الدم البيضاء (Total WBC)', val: data.wbc, unit: '×10³/µL', min: 4.0, max: 11.0, scaleMax: 25, desc: 'مؤشر المناعة والعدوى والالتهاب في الجسم' },
+                { name: 'العدلات (Neutrophils %)', val: data.neut, unit: '%', min: 50, max: 70, scaleMax: 100, desc: 'ترتفع في العدوى البكتيرية الحادة' },
+                { name: 'الخلايا الليمفاوية (Lymphocytes %)', val: data.lymph, unit: '%', min: 20, max: 40, scaleMax: 100, desc: 'ترتفع في العدوى الفيروسية' },
+                { name: 'الصفائح الدموية (Platelets)', val: data.plt, unit: '×10³/µL', min: 150, max: 450, scaleMax: 650, desc: 'المسؤولة عن الإرقاء وتكوين السدادة الصفائحية' }
+            ];
+
+            const listContainer = document.getElementById('cbc-parameters-list');
+            listContainer.innerHTML = params.map(p => {
+                let status = 'طبيعي';
+                let statusColor = 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30';
+                let barColor = 'bg-emerald-500';
+
+                if (p.val < p.min) {
+                    status = 'منخفض (Low)';
+                    statusColor = 'text-cyan-300 bg-cyan-500/15 border-cyan-500/30';
+                    barColor = 'bg-cyan-400';
+                } else if (p.val > p.max) {
+                    status = 'مرتفع (High)';
+                    statusColor = 'text-red-400 bg-red-500/15 border-red-500/30';
+                    barColor = 'bg-red-500';
+                }
+
+                const pct = Math.min(100, Math.max(5, (p.val / p.scaleMax) * 100));
+
+                return `
+                    <div class="p-3.5 rounded-2xl glass-panel border border-slate-700/70">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                            <div>
+                                <span class="font-extrabold text-xs sm:text-sm">${p.name}</span>
+                                <span class="block text-[11px] text-slate-400">${p.desc}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-black text-sm sm:text-base ltr-num">${p.val} <span class="text-xs font-normal text-slate-400">${p.unit}</span></span>
+                                <span class="px-2 py-0.5 rounded-lg text-[11px] font-bold border ${statusColor}">${status}</span>
+                            </div>
+                        </div>
+                        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full ${barColor} transition-all duration-300 rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono ltr-num">
+                            <span>0</span>
+                            <span>Normal Range: ${p.min} – ${p.max} ${p.unit}</span>
+                            <span>${p.scaleMax}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ---------------------------------------------------------------------
+        // INITIALIZE ON WINDOW LOAD
+        // ---------------------------------------------------------------------
+        window.onload = function() {
+            initBloodButtons();
+            checkCompatibility();
+            switchProtocolTab('pre');
+            initCbcButtons();
+        };
+    </script>
+</body>
+</html>
